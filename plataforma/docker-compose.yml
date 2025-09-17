@@ -1,0 +1,195 @@
+# WARNING: Do not deploy this tutorial configuration directly to a production environment
+#
+# The tutorial docker-compose files have not been written for production deployment and will not 
+# scale. A proper architecture has been sacrificed to keep the narrative focused on the learning 
+# goals, they are just used to deploy everything onto a single Docker machine. All FIWARE components 
+# are running at full debug and extra ports have been exposed to allow for direct calls to services. 
+# They also contain various obvious security flaws - passwords in plain text, no load balancing,
+# no use of HTTPS and so on. 
+# 
+# This is all to avoid the need of multiple machines, generating certificates, encrypting secrets
+# and so on, purely so that a single docker-compose file can be read as an example to build on, 
+# not use directly. 
+# 
+# When deploying to a production environment, please refer to the Helm Repository
+# for FIWARE Components in order to scale up to a proper architecture:
+# 
+# see: https://github.com/FIWARE/helm-charts/
+#
+services:
+  # Orion Context Broker é um componente central do FIWARE, responsável por gerenciar o contexto
+  # de entidades e fornecer APIs para criar, ler, atualizar e excluir entidades.
+  # O Orion Context Broker é compatível com o padrão NGSI-V2 (Next Generation Service Interface) e
+  # permite a comunicação entre diferentes componentes e aplicações dentro do ecossistema FIWARE.
+  orion: # Orion Context Broker
+    image: quay.io/fiware/orion:4.1.0 # Imagem do Orion Context Broker 
+    hostname: orion # Nome do host do contêiner
+    container_name: fiware-orion # Nome do contêiner 
+    depends_on:  # Dependências do serviço. O Orion Context Broker depende do MongoDB para armazenar dados.
+      - mongo-db
+    networks: # Redes em que o contêiner estará conectado
+      - default
+    ports: # Portas expostas para acesso externo 
+      - "1026:1026" # localhost:1026
+    command: -dbURI mongodb://mongo-db -logLevel DEBUG -noCache # Comando para iniciar o Orion Context Broker
+    healthcheck: # Verificação de saúde do contêiner
+      test: curl --fail -s http://orion:1026/version || exit 1
+      interval: 60s
+
+
+  # Databases
+  # MongoDB é um banco de dados NoSQL orientado a documentos, usado pelo Orion Context Broker para
+  # armazenar dados de contexto. O MongoDB armazena dados em formato JSON-like, permitindo flexibilidade
+  # na estrutura dos dados. O MongoDB é escalável e pode lidar com grandes volumes de dados, o que
+  # o torna adequado para aplicações que exigem alta disponibilidade e desempenho.
+  mongo-db:
+    image: mongo:4.4 # Imagem do MongoDB
+    hostname: mongo-db  # Nome do host do contêiner
+    container_name: mongo-db # Nome do contêiner
+    expose: # Portas expostas para acesso interno
+      - "27017" 
+    ports: # Portas expostas para acesso externo
+      - "27017:27017" 
+    volumes: # Volumes para persistência de dados do MongoDB
+      - mongo-db:/data/db
+    healthcheck: # Verificação de saúde do contêiner
+      test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+    networks:
+      - default # Rede padrão
+
+  # IoT Agent JSON é um componente que atua como um intermediário entre dispositivos IoT e o Orion
+  # Context Broker. Ele permite que dispositivos IoT se conectem e enviem dados para o Orion Context
+  # Broker usando o protocolo JSON. O IoT Agent JSON traduz os dados recebidos dos dispositivos IoT
+  # em um formato compreensível pelo Orion Context Broker, permitindo que os dados sejam armazenados
+  # e gerenciados de forma eficiente. Ele também suporta a criação de entidades e atributos no Orion
+  iot-agent-json: # IoT Agent JSON
+    image: fiware/iotagent-json:3.5.0 # Imagem do IoT Agent JSON
+    hostname: iot-agent-json # Nome do host do contêiner
+    container_name: fiware-iot-agent # Nome do contêiner
+    depends_on:
+      - mongo-db
+    expose: # Portas expostas para acesso interno
+      - "4041"
+      - "7896"
+    ports: # Portas expostas para acesso externo
+      - "4041:4041"
+      - "7896:7896"
+    environment: # Variáveis de ambiente para configuração do IoT Agent JSON
+      - "IOTA_CB_HOST=orion"
+      - "IOTA_CB_PORT=1026"
+      - "IOTA_NORTH_PORT=4041"
+      - "IOTA_REGISTRY_TYPE=mongodb"
+      - "IOTA_TIMESTAMP=true" 
+      - "IOTA_CB_NGSI_VERSION=v2" 
+      - "IOTA_MONGO_HOST=mongo-db"
+      - "IOTA_MONGO_PORT=27017"
+      - "IOTA_MONGO_DB=iotagentjson"
+      - "IOTA_HTTP_PORT=7896"
+      - "IOTA_PROVIDER_URL=http://iot-agent-json:4041"
+      - "IOTA_MQTT_HOST=mosquitto"
+      - "IOTA_MQTT_PORT=1883"
+      - "IOTA_host_TRANSPORT=MQTT"
+    healthcheck:
+      interval: 5s
+  
+  # O mosquitto é um broker MQTT (Message Queuing Telemetry Transport) leve e de código aberto,
+  # projetado para dispositivos e aplicações com restrições de recursos.
+  # O MQTT é um protocolo de mensagens leve e eficiente, ideal para comunicação entre dispositivos IoT. 
+  mosquitto:
+    image: eclipse-mosquitto:2.0.18 # Imagem do Eclipse Mosquitto
+    hostname: mosquitto # Nome do host do contêiner
+    container_name: mosquitto # Nome do contêiner
+    expose: # Portas expostas para acesso interno
+      - "1883"
+      - "9001"
+    ports: # Portas expostas para acesso externo
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks: # Redes em que o contêiner estará conectado
+      - default # Rede padrão
+
+  # MySQL é um banco de dados relacional usado para armazenar dados históricos do Orion Context Broker
+  mysql-db-projeto:
+    image: mysql:5.7
+    hostname: mysql-db-projeto # Nome do host do contêiner
+    container_name: mysql-db-projeto # Nome do contêiner
+    networks: # Redes em que o contêiner estará conectado
+      - default # Rede padrão
+    expose: # Portas expostas para acesso interno
+      - "3306" # porta padrão do MySQL
+    ports:
+      - "3306:3306" # localhost:3306
+    environment:
+      - "MYSQL_ROOT_PASSWORD=123"
+      - "MYSQL_ROOT_HOST=%"
+    volumes: # Volumes para persistência de dados do MySQL
+      - mysql-db-projeto:/var/lib/mysql
+
+# --- Agentes de Processamento ---
+
+  # Cygnus é um agente que conecta o Orion Context Broker a diferentes sistemas de armazenamento
+  cygnus:
+    image: fiware/cygnus-ngsi:3.5.0 # Imagem do Cygnus
+    hostname: cygnus # Nome do host do contêiner
+    container_name: fiware-cygnus # Nome do contêiner
+    depends_on: # Dependências do serviço. O Cygnus depende do MySQL para armazenar dados históricos.
+      - mysql-db-projeto # Banco de dados MySQL
+    networks: # Redes em que o contêiner estará conectado
+      - default
+    expose: # Portas expostas para acesso interno
+      - "5050"
+      - "5080"
+    ports: # Portas expostas para acesso externo
+      - "5050:5050" 
+      - "5080:5080" 
+    environment: # Variáveis de ambiente para configuração do Cygnus
+      - "CYGNUS_MYSQL_SERVICE_PORT=5050" # 
+      - "CYGNUS_MYSQL_HOST=mysql-db-projeto" 
+      - "CYGNUS_MYSQL_PORT=3306" 
+      - "CYGNUS_MYSQL_USER=root" 
+      - "CYGNUS_MYSQL_PASS=123" 
+      - "CYGNUS_SERVICE_PORT=5050"
+      - "CYGNUS_API_PORT=5080" 
+      - "CYGNUS_LOG_LEVEL=DEBUG"
+    healthcheck:
+      test: curl --fail -s http://localhost:5080/v1/version || exit 1
+
+  # Grafana é uma plataforma de análise e monitoramento através de dashboards
+  grafana:
+    image: grafana/grafana:9.3.2 # Imagem do Grafana
+    hostname: grafana # Nome do host do contêiner
+    container_name: grafana # Nome do contêiner
+    depends_on: # Dependências do serviço. O Grafana depende do MySQL para armazenar dados históricos.
+      - mysql-db-projeto # Banco de dados MySQL
+    ports: # Portas expostas para acesso externo
+      - "3000:3000" # localhost:3000
+
+  weather:
+    build: ./weather
+    hostname: weather
+    container_name: weather
+    networks:
+      - default
+    
+    
+# Redes são usadas para conectar contêineres entre si e com o mundo externo.
+# As redes permitem que os contêineres se comuniquem entre si de forma segura e isolada.
+networks: # Definição de redes
+  default: # Rede padrão
+    labels: # Labels para identificar a rede como parte do tutorial
+      org.fiware: 'tutorial'
+    ipam: # Gerenciamento de endereços IP 
+      config:
+        - subnet: 172.18.1.0/24
+
+# Volumes são usados para persistência de dados entre reinicializações de contêineres.
+volumes: 
+  mongo-db: # Volume para persistência de dados do MongoDB
+  mysql-db-projeto: # Volume para persistência de dados do MySQL
+  

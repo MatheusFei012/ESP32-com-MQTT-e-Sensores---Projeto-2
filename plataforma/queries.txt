@@ -1,0 +1,36 @@
+A query abaixo serve para obter os dados e criar dashboards no Grafana. 
+Lembrando que o nome das variáveis estão determinados no Orion e IoT Agent e na subscrição do Cygnus
+
+docker exec -it  db-mysql mysql -h mysql-db -P 3306  -u root -p123
+
+# Exemplo de requisição simples para um único parametro de uma entidade de clima
+
+SELECT UNIX_TIMESTAMP(recvTime) as "time", attrValue as "temperaure"
+FROM lab.Weather_Weather
+WHERE attrName = "temperature"
+ORDER BY "time"
+
+# Exempli de requisiçào para múltiplos parametros de uma entidade de clima
+
+SELECT Distinct UNIX_TIMESTAMP(recvTime) as "time", 
+CAST((case when attrName = "temperature" then attrValue end) as decimal) as temperature,
+CAST((case when attrName = "windspeed" then attrValue end) as decimal) as windspeed
+FROM lab.Weather_Weather
+ORDER BY "time"
+
+# Exemplo de query para uma sonda de solo com 5 parametros. 
+
+SELECT
+  DISTINCT UNIX_TIMESTAMP(MAX(CASE attrName WHEN 'TimeInstant' THEN attrValue END)) as "time",
+  CAST(MAX(CASE attrName WHEN 'soilMoistureCalibratedDepth1' THEN attrValue END) as Decimal(5,2)) as "Soil Moisture 1",
+  CAST(MAX(CASE attrName WHEN 'soilMoistureCalibratedDepth2' THEN attrValue END)as Decimal(5,2)) as "Soil Moisture 2",
+  CAST(MAX(CASE attrName WHEN 'airHumidity' THEN attrValue END) as Decimal(5,2)) as "Air Humidity",
+  CAST(MAX(CASE attrName WHEN 'airTemperature' THEN attrValue END) as Decimal(5,2)) as "Air Temperature",
+  CAST(MAX(CASE attrName WHEN 'soilTemperature' THEN attrValue END) as Decimal(5,2)) as "Soil Temperature"
+FROM lab.`urn_ngsi-ld_SoilProbe_1_SoilProbe`
+GROUP BY recvTime, "time"
+ORDER BY "time"
+
+
+
+

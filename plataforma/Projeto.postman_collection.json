@@ -1,0 +1,1756 @@
+{
+	"info": {
+		"_postman_id": "b69a535b-9e0a-4fc9-a466-5af051c31373",
+		"name": "Projeto",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6747057"
+	},
+	"item": [
+		{
+			"name": "Requisições do Projeto",
+			"item": [
+				{
+					"name": "Orion Context Broker",
+					"item": [
+						{
+							"name": "Cria a entidade para o Clima atual",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"urn:ngsi-ld:Weather:001\",\n    \"type\": \"Weather\",\n    \"dateObserved\": {\n        \"type\": \"Datetime\"\n    },\n    \"temperature\": {\n        \"type\": \"Number\",\n        \"value\": 0\n    },\n    \"pressure\": {\n        \"type\": \"Number\",\n        \"value\": 0\n    },\n    \"humidity\": {\n        \"type\": \"Number\",\n        \"value\": 0\n    }\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										""
+									]
+								},
+								"description": "This example adds a new **Product** entity to the context.\n\nNew entities can be added by making a POST request to the `/v2/entities/` endpoint.\n\nThe request will **fail** if any of the attributes already exist in the context.\n\nAny entity must have a `id` and `type` attributes, each additional attributes are optional \nand will depend on the system being described. Each additional attribute should also have a \ndefined `type` and a `value` attribute. The product has been assigned a unique `id` following\nthe NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`.\n\n---\nSubsequent requests using the same `id` will result in an error response."
+							},
+							"response": []
+						},
+						{
+							"name": "Verifica os dados para o clima atual",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Weather:001?options=keyValues",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Weather:001"
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "keyValues"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Iot Agent JSON",
+					"item": []
+				}
+			]
+		},
+		{
+			"name": "Operações CRUD - Orion Context Broker",
+			"item": [
+				{
+					"name": "Create Operations",
+					"item": [
+						{
+							"name": "Create a New Data Entity",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": " {\n      \"id\":\"urn:ngsi-ld:Product:010\", \"type\":\"Product\",\n      \"name\":{\"type\":\"Text\", \"value\":\"Lemonade\"},\n      \"size\":{\"type\":\"Text\", \"value\": \"S\"},\n      \"price\":{\"type\":\"Integer\", \"value\": 99}\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										""
+									]
+								},
+								"description": "This example adds a new **Product** entity to the context.\n\nNew entities can be added by making a POST request to the `/v2/entities/` endpoint.\n\nThe request will **fail** if any of the attributes already exist in the context.\n\nAny entity must have a `id` and `type` attributes, each additional attributes are optional \nand will depend on the system being described. Each additional attribute should also have a \ndefined `type` and a `value` attribute. The product has been assigned a unique `id` following\nthe NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`.\n\n---\nSubsequent requests using the same `id` will result in an error response."
+							},
+							"response": []
+						},
+						{
+							"name": "Create a New Attribute",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"specialOffer\":{\"value\": true}\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:001/attrs",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:001",
+										"attrs"
+									]
+								},
+								"description": "This example adds a new `specialOffer` attribute to the existing **Product** entity with `id=urn:ngsi-ld:Product:001`\n\nNew attributes can be added by making a POST request to the `/v2/entities/<entity>/attrs` endpoint. \n\nThe payload should consist of a JSON object holding the attribute names and values as shown. \n\nIf no `type` is specified a default `type` (`Boolean`, `Text` or `Number` or `StructuredValue`) will be assigned.\n\n---\nSubsequent requests using the same `id` will update the value of the attribute in the context"
+							},
+							"response": []
+						},
+						{
+							"name": "Batch Create New Data Entities or Attributes",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"append_strict\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:011\", \"type\":\"Product\",\n      \"name\":{\"type\":\"Text\", \"value\":\"Brandy\"},\n      \"size\":{\"type\":\"Text\", \"value\": \"M\"},\n      \"price\":{\"type\":\"Integer\", \"value\": 1199}\n    },\n    {\n      \"id\":\"urn:ngsi-ld:Product:012\", \"type\":\"Product\",\n      \"name\":{\"type\":\"Text\", \"value\":\"Port\"},\n      \"size\":{\"type\":\"Text\", \"value\": \"M\"},\n      \"price\":{\"type\":\"Integer\", \"value\": 1099}\n    },\n    {\n      \"id\":\"urn:ngsi-ld:Product:001\", \"type\":\"Product\",\n      \"offerPrice\":{\"type\":\"Integer\", \"value\": 89}\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update/",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update",
+										""
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to add two new **Product** entities and one new attribute (`offerPrice`)\nto the context. \n\nThe request will **fail** if any of the attributes already exist in the context.\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes\n* `actionType=append_strict` means that the request only succeed if all entities / attributes are new.\n* The `entities` attribute holds an array of entities we wish to create.\n\nEach product has a unique `id` following the NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`.\n\n---\nSubsequent requests using the same data with the `actionType=append_strict` batch operation will result in an error response."
+							},
+							"response": []
+						},
+						{
+							"name": "Batch Create/Overwrite New Data Entities",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"append\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:011\", \"type\":\"Product\",\n      \"name\":{\"type\":\"Text\", \"value\":\"Brandy\"},\n      \"size\":{\"type\":\"Text\", \"value\": \"M\"},\n      \"price\":{\"type\":\"Integer\", \"value\": 1199}\n    },\n    {\n      \"id\":\"urn:ngsi-ld:Product:012\", \"type\":\"Product\",\n      \"name\":{\"type\":\"Text\", \"value\":\"Port\"},\n      \"size\":{\"type\":\"Text\", \"value\": \"M\"},\n      \"price\":{\"type\":\"Integer\", \"value\": 1099}\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update/",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update",
+										""
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to add or amend two **Product** entities and one attribute (`offerPrice`) to the context.\n\n-   `actionType=append` means we will overwrite existing entities if they exist\n-   The entities attribute holds an array of entities we wish to\n    create/overwrite.\n\nA subsequent request containing the same data (i.e. same entities and `actionType=append`)\nwon't change the context state.\n\n\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes:\n* `actionType=append` means we will overwrite existing entities if they exist\n* The `entities` attribute holds an array of entities we wish to create/overwrite.\n\nEach product has a unique `id` following the NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`."
+							},
+							"response": []
+						}
+					],
+					"description": "Create Operations map to HTTP POST.\n\n-   The `/v2/entities` endpoint is used for creating new entities\n-   The `/v2/entities/<entity>` endpoint is used for adding new attributes\n\nAny newly created entity must have `id` and `type` attributes, other attributes\nare optional and will depend on the system being modelled. If additional\nattributes are present though, each should specify both a `type` and a `value`.\n\nThe response will be **204 - No Content** if the operation is successful or\n**422 - Unprocessable Entity** if the operation fails.\n",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Read Operations",
+					"item": [
+						{
+							"name": "Read a Data Entity (verbose)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:010",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:010"
+									]
+								},
+								"description": "This example reads the full context from an existing **Product** entity with a known id.\n\nContext data can be retrieved by making a GET request to the `/v2/entities/<entity>` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Read an Attribute from a Data Entity",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:001/attrs/name/value",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:001",
+										"attrs",
+										"name",
+										"value"
+									]
+								},
+								"description": "This example reads the value of a single attribute (`name`)  from an existing **Product** entity with a known `id`.\n\nContext data can be retrieved by making a GET request to the `/v2/entities/<entity>/attrs/<attribute>/value` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Read a Data Entity (key value pairs)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Weather:001/?attrs=temperature&Type=Weather",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Weather:001",
+										""
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "keyValues",
+											"description": "* `keyValues` option in order to get a more compact and brief representation, including just attribute values\n* `values` option combined with a list of attribute values  `attrs`  for an ordered list of attributes only\n",
+											"disabled": true
+										},
+										{
+											"key": "attrs",
+											"value": "temperature",
+											"description": "Ordered list of attribute names to display"
+										},
+										{
+											"key": "Type",
+											"value": "Weather"
+										}
+									]
+								},
+								"description": "This example reads the key-value pairs for two requested attributes (`name` and `price`) from the context of existing **Product** entity with a known `id`.\n\nCombine the `options=keyValues` parameter and the `attrs` parameter to obtain key-values."
+							},
+							"response": []
+						},
+						{
+							"name": "Read Multiple attributes values from a Data Entity",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:001/?options=values&attrs=name,price",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:001",
+										""
+									],
+									"query": [
+										{
+											"key": "options",
+											"value": "values",
+											"description": "* `keyValues` option in order to get a more compact and brief representation, including just attribute values\n* `values` option combined with a list of attribute values  `attrs`  for an ordered list of attributes only"
+										},
+										{
+											"key": "attrs",
+											"value": "name,price",
+											"description": "Ordered list of attribute names to display"
+										}
+									]
+								},
+								"description": "This example reads the value of two requested attributes (`name` and `price`) from the context of existing **Product** entity with a known `id`.\n\nCombine the `options=values` parameter and the `attrs` parameter to return a list of values in an array"
+							},
+							"response": []
+						},
+						{
+							"name": "List all Data Entities (verbose)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/?type=Product",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										""
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Product"
+										}
+									]
+								},
+								"description": "This example lists the full context of all **Product** entities.\n\nFull context data  for a specified entity type can be retrieved by making a GET request to the `/v2/entities/` endpoint and supplying the `type` parameter."
+							},
+							"response": []
+						},
+						{
+							"name": "List all Data Entities (key value pairs)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/?type=Product&options=keyValues&attrs=name,price",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										""
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Product",
+											"description": "Entity type"
+										},
+										{
+											"key": "options",
+											"value": "keyValues",
+											"description": "* `keyValues` option in order to get a more compact and brief representation, including just attribute values\n* `values` option combined with a list of attribute values  `attrs`  for an ordered list of attributes only\n"
+										},
+										{
+											"key": "attrs",
+											"value": "name,price",
+											"description": "Ordered list of attribute names to display"
+										}
+									]
+								},
+								"description": "This example lists the `name` and `price` attributes of all **Product** entities.\n\nFull context data  for a specified entity type can be retrieved by making a GET request to the `/v2/entities/` endpoint and supplying the `type` parameter  combine this with the `options=keyValues` parameter and the `attrs` parameter to obtain key-values."
+							},
+							"response": []
+						},
+						{
+							"name": "List Data Entity by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/?type=Product&options=count&attrs=id",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										""
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Product",
+											"description": "Entity type"
+										},
+										{
+											"key": "options",
+											"value": "count",
+											"description": "* `keyValues` option in order to get a more compact and brief representation, including just attribute values\n* `values` option combined with a list of attribute values  `attrs`  for an ordered list of attributes only"
+										},
+										{
+											"key": "attrs",
+											"value": "id",
+											"description": "Ordered list of attribute names to display"
+										}
+									]
+								},
+								"description": "This example lists the `id` and `type` of all **Product** entities.\n\nContext data  for a specified entity type can be retrieved by making a GET request to the `/v2/entities/` endpoint and supplying the `type` parameter. Combine this with `options=count` and `attrs=id` to return the `id` attributes of the given `type`"
+							},
+							"response": []
+						}
+					],
+					"description": "Read Operations map to HTTP GET.\n\n* The `/v2/entities/` endpoint is used for listing operations\n* The `/v2/entities/<entity>` endpoint is used for retrieving the details of a single entity\n\n## Filtering\n\n* The `options` parameter (combined with the `attrs` parameter) is used to filter the fields returned\n* The `q` parameter can be used to filter the entities returned \n",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update Operations",
+					"item": [
+						{
+							"name": "Overwrite the value of an Attribute value",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "text/plain"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "89"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:001/attrs/price/value",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:001",
+										"attrs",
+										"price",
+										"value"
+									]
+								},
+								"description": "This example updates the value of the `price` attribute of the Entity with `id=urn:ngsi-ld:Product:001`\n\nExisiting attribute values can be altered by making a PUT request to the `/v2/entities/<entity>/attrs/<attribute>/value` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Overwrite Multiple Attributes of a Data Entity",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"price\": {\n        \"type\": \"Integer\",\n        \"value\": 89\n    }\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:001/attrs",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:001",
+										"attrs"
+									]
+								},
+								"description": "This example simultaneously updates the values of both the `price` and `name` attributes of the Entity with `id=urn:ngsi-ld:Product:001`\n\nMultiple Existing attribute values can be updated by making a PATCH request to the `/v2/entities/<entity>/attrs` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Batch Overwrite Attributes of Multiple Data Entities",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"update\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:001\", \"type\":\"Product\",\n      \"price\":{\"type\":\"Integer\", \"value\": 1199}\n    },\n    {\n      \"id\":\"urn:ngsi-ld:Product:002\", \"type\":\"Product\",\n      \"price\":{\"type\":\"Integer\", \"value\": 1199},\n      \"size\": {\"type\":\"Text\", \"value\": \"L\"}\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update"
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to create a series of available products.\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes - `actionType=update` means we will overwrite existing entities if they exist whereas the `entities` attribute holds an array of entities we wish to update.\n\nEach product has a unique `id` following the NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`."
+							},
+							"response": []
+						},
+						{
+							"name": "Batch  Create/Overwrite Attributes of Multiple Data Entities",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"append\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:001\", \"type\":\"Product\",\n      \"price\":{\"type\":\"Integer\", \"value\": 1199}\n    },\n    {\n      \"id\":\"urn:ngsi-ld:Product:002\", \"type\":\"Product\",\n      \"price\":{\"type\":\"Integer\", \"value\": 1199},\n      \"specialOffer\": {\"type\":\"Boolean\", \"value\":  true}\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update"
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to create a series of available products.\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes - `actionType=append` means we will overwrite existing entities if they exist whereas the `entities` attribute holds an array of entities we wish to update.\n\nEach product has a unique `id` following the NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`."
+							},
+							"response": []
+						},
+						{
+							"name": "Batch Replace Entity Data",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"replace\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:010\", \"type\":\"Product\",\n      \"price\":{\"type\":\"Integer\", \"value\": 1199}\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update"
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to create a series of available products.\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes - `actionType=replace` means we will overwrite existing entities if they exist whereas the `entities` attribute holds an array of entities we wish to update.\n\nEach product has a unique `id` following the NGSI-LD  [specification](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.03.01_60/gs_cim009v010301p.pdf)  and has been assigned `type=Product`."
+							},
+							"response": []
+						}
+					],
+					"description": "Overwrite operations are mapped to HTTP PUT.\nHTTP PATCH can be used to update several attributes at once.\n",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete Operations",
+					"item": [
+						{
+							"name": "Delete a Data Entity",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:010",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:010"
+									]
+								},
+								"description": "This example deletes the Entity with `id=urn:ngsi-ld:Product:001` from the context\n\nEntities be deleted by making a DELETE request to the `/v2/entities/<entity>` endpoint.\n\n---\nSubsequent requests using the same `id` will result in an error response since the entity no longer exists"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete an Attribute from a Data Entity",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/urn:ngsi-ld:Product:010/attrs/specialOffer",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										"urn:ngsi-ld:Product:010",
+										"attrs",
+										"specialOffer"
+									]
+								},
+								"description": "This example remove the `specialOffer` attribute from the Entity with `id=urn:ngsi-ld:Product:010` \n\nAttributes be deleted by making a DELETE request to the `/v2/entities/<entity>/attrs/<attribute>` endpoint.\n\n---\nIf the attribute does not exist in the context, the result in an error response."
+							},
+							"response": []
+						},
+						{
+							"name": "Batch Delete Multiple Data Entities",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"delete\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:001\", \"type\":\"Product\"\n    },\n    {\n      \"id\":\"urn:ngsi-ld:Product:002\", \"type\":\"Product\"\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update"
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to delete a series of available products.\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes - `actionType=delete` means we will\ndelete something from the context and the `entities` attribute holds the `id` of the entities we wish to update.\n\n---\nIf any entity does not exist in the context, the result in an error response."
+							},
+							"response": []
+						},
+						{
+							"name": "Batch Delete  Multiple Attributes from a Data Entity",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"actionType\":\"delete\",\n  \"entities\":[\n    {\n      \"id\":\"urn:ngsi-ld:Product:010\", \"type\":\"Product\",\n      \"price\":{},\n      \"name\": {}\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/op/update",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"op",
+										"update"
+									]
+								},
+								"description": "This example uses the convenience batch processing endpoint to delete a series of attributes from  an available product.\n\nBatch processing uses the `/v2/op/update` endpoint with a payload with two attributes - `actionType=delete` means we will\ndelete something from the context and the `entities` attribute holds an array of attributes we wish to update.\n\n---\nIf any attribute does not exist in the context, the result in an error response."
+							},
+							"response": []
+						},
+						{
+							"name": "Find existing data relationships",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/entities/?q=refProduct==urn:ngsi-ld:Product:001&options=count&attrs=type",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"entities",
+										""
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "refProduct==urn:ngsi-ld:Product:001"
+										},
+										{
+											"key": "options",
+											"value": "count",
+											"description": "* `keyValues` option in order to get a more compact and brief representation, including just attribute values\n* `values` option combined with a list of attribute values  `attrs`  for an ordered list of attributes only"
+										},
+										{
+											"key": "attrs",
+											"value": "type",
+											"description": "Ordered list of attribute names to display"
+										}
+									]
+								},
+								"description": "This example returns the key of all entities directly associated with the `urn:ngsi-ld:Product:001`.\n\n* If this request returns an empty array, the entity has no associates - it can be safely deleted\n* If the response lists a series of **InventoryItem** entities they should be deleted before the product is removed from the context.\n\n\nNote that we deleted **Product** `urn:ngsi-ld:Product:001` earlier, so what we\nsee above is actually a dangling reference, i.e. the returned **InventoryItem**\nreferences a **Product** that no longer exists."
+							},
+							"response": []
+						}
+					],
+					"description": "Delete Operations map to HTTP DELETE.\n\n## Data Relationships\n\nIf there are entities within the context which relate to one another, you must be careful when deleting an entity. You will need to check that no references are left dangling once the entity has been deleted. \n\nOrganizing a cascade of deletions is beyond the scope of this tutorial, but it would be possible using a batch delete request.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Registrations Operations",
+					"item": [
+						{
+							"name": "Register a Context Provider - Weather",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"Get Weather data for Store 1\",\n    \"dataProvided\": {\n        \"entities\": [\n            {\n                \"id\": \"urn:ngsi-ld:Store:001\",\n                \"type\": \"Store\"\n            }\n        ],\n        \"attrs\": [\n            \"temperature\",\n            \"relativeHumidity\"\n        ]\n    },\n    \"provider\": {\n        \"http\": {\n            \"url\": \"http://context-provider:3000/random/weatherConditions\"\n        },\n        \"legacyForwarding\": false\n    },\n    \"status\": \"active\"\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/registrations",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"registrations"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Store",
+											"description": "Entity type, to avoid ambiguity in case there are several entities with the same entity id",
+											"disabled": true
+										},
+										{
+											"key": "attrs",
+											"value": "name",
+											"description": "Ordered list of attribute names to display",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This example registers the Random Data Context Provider with the Orion Context Broker.\n\nThe body of the request states that: *\"The URL* `http://context-provider:3000/proxy/v1/random/weatherConditions` *is capable of providing* `relativeHumidity`  and `temperature` *data for the entity called* `id=urn:ngsi-ld:Store:001`.*\"*\n\nThe values are **never** held within Orion, it is always requested on demand from the registered context provider. Orion merely holds the registration information about which context providers can offer context data.\n\nThis request will return with a **201 - Created** response code. The `Location` Header of the response contains a path to the registration record held in Orion.\n\n>*Note:* if you have registered with the Weather API, you can retrieve live values for `temperature` and `relativeHumidity` in Berlin by placing the following `url` in the `provider`:\n>\n> * `http://context-provider:3000/proxy/v1/weather/weatherConditions`\n>"
+							},
+							"response": []
+						},
+						{
+							"name": "Register a Context Provider - Tweets",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"description\": \"Get Tweets for Store 1\",\n   \"dataProvided\": {\n     \"entities\": [\n       {\n         \"id\" : \"urn:ngsi-ld:Store:001\",\n         \"type\": \"Store\"\n       }\n     ],\n     \"attrs\": [\n      \"tweets\"\n    ]\n   },\n   \"provider\": {\n     \"http\": {\n       \"url\": \"http://context-provider:3000/catfacts/tweets\"\n     },\n     \"legacyForwarding\": false\n   },\n   \"status\": \"active\"\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/registrations",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"registrations"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Store",
+											"description": "Entity type, to avoid ambiguity in case there are several entities with the same entity id",
+											"disabled": true
+										},
+										{
+											"key": "attrs",
+											"value": "name",
+											"description": "Ordered list of attribute names to display",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This example registers the Cat Facts API Context Provider with the Orion Context Broker.\n\nThe body of the request states that: *\"The URL* `http://context-provider:3000/proxy/v1/catfacts/tweets` *is capable of providing* `tweets` *data for the entity called* `id=urn:ngsi-ld:Store:001`.*\"*\n\nThe values are **never** held within Orion, it is always requested on demand from the registered context provider. Orion merely holds the registration information about which context providers can offer context data.\n\nThis request will return with a **201 - Created** response code. The `Location` Header of the response contains a path to the registration record held in Orion.\n\n>*Note:* if you have registered with the Twitter API, you can retrieve live values for `tweets` in Berlin by placing the following `url` in the `provider`:\n>\n> * `http://context-provider:3000/proxy/v1/twitter/tweets`\n>"
+							},
+							"response": []
+						},
+						{
+							"name": "List all registered content providers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/registrations",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"registrations"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Store",
+											"description": "Entity type, to avoid ambiguity in case there are several entities with the same entity id",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This example lists all registered context providers\n\nFull context data  for a specified entity type can be retrieved by making a GET request to the `/v2/registrations/` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Read a registered content provider",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/registrations/6821e0dd383005f2080aeb2c",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"registrations",
+										"6821e0dd383005f2080aeb2c"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Store",
+											"description": "Entity type, to avoid ambiguity in case there are several entities with the same entity id",
+											"disabled": true
+										},
+										{
+											"key": "attrs",
+											"value": "name",
+											"description": "Ordered list of attribute names to display",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This example reads  the registration data with the id `5addeffd93e53f86d8264521` from the context.\n\nRegistration data can be obtained by making a GET request to the `/v2/registrations/<entity>` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Remove a registered content provider",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/registrations/6821e1ed38df1c88930fbeec",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"registrations",
+										"6821e1ed38df1c88930fbeec"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Store",
+											"description": "Entity type, to avoid ambiguity in case there are several entities with the same entity id",
+											"disabled": true
+										},
+										{
+											"key": "attrs",
+											"value": "name",
+											"description": "Ordered list of attribute names to display",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This example removes the registration with the id `5ad5b9435c28633f0ae90671` from the context.\n\nRegistrations can be deleted by making a DELETE request to the `/v2/registrations/<entity>` endpoint.\n\n---\nSubsequent requests using the same `id` will result in an error response since the entity no longer exists"
+							},
+							"response": []
+						}
+					],
+					"description": "All Context Provider Registration actions take place on the `v2/registrations` endpoint. The standatd CRUD mappings apply:\n\n* Creation is mapped to the HTTP POST\n* Reading/Listing registrations to HTTP GET verb\n* Deletion is mapped to HTTP DELETE",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Subscription Operations",
+					"item": [
+						{
+							"name": "Create a Subscription (Product)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "content-type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"Notify me of all product price changes\",\n    \"subject\": {\n        \"entities\": [\n            {\n                \"idPattern\": \".*\",\n                \"type\": \"Product\"\n            }\n        ],\n        \"condition\": {\n            \"attrs\": [\n                \"price\"\n            ]\n        }\n    },\n    \"notification\": {\n        \"http\": {\n            \"url\": \"http://context-provider:3000/subscription/price-change\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/subscriptions/",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"subscriptions",
+										""
+									]
+								},
+								"description": "This example creates a new subscription. The subscription will fire an asynchronous notification to a URL\nwhenever the context is changed and the conditions of the subscription - *Any Changes to Product prices* - are met.\n\nNew subscriptions can be added by making a POST request to the `/v2/subscriptions/` endpoint.\n\nThe `subject` section of the request states that the subscription will be fired whenever the `price` attribute of\nany **Product** entity is altered.\n\nThe `notification` section of the body states that a POST request containing all affected entities will\nbe sent to the `http://context-provider:3000/subscription/price-change` endpoint.\n\n\nSubscription ids are auto-generated when the subscription is created and returned in the header of the response.\n\n---\nSubsequent requests will create duplicate subscriptions"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Subscription",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://{{host}}:1026/v2/subscriptions/5ae079b86e4f353c5163c939",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"port": "1026",
+									"path": [
+										"v2",
+										"subscriptions",
+										"5ae079b86e4f353c5163c939"
+									]
+								},
+								"description": "This example deletes the Subscription with `id=5ae079b86e4f353c5163c939` from the context.\n\nSubscriptions can be deleted by making a DELETE request to the `/v2/subscriptions/<subscription-id>` endpoint.\n\nThe Subscription id had been auto-generated when the subscription was created.\n\n---\nSubsequent requests using the same `id` will result in an error response since the subscription no longer exists"
+							},
+							"response": []
+						},
+						{
+							"name": "Amend an Existing Subscription",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "content-type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"active\",\n    \"notification\": {\n        \"http\": {\n            \"url\": \"http://context-provider:3000/notify/price-change\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "http://{{host}}:1026/v2/subscriptions/5ae07c7e6e4f353c5163c93e",
+									"protocol": "http",
+									"host": [
+										"{{host}}"
+									],
+									"port": "1026",
+									"path": [
+										"v2",
+										"subscriptions",
+										"5ae07c7e6e4f353c5163c93e"
+									]
+								},
+								"description": "This example amends an existing subscription with the id `5ae07c7e6e4f353c5163c93e` and updates the `notification` URL.\n\nSubscriptions can be updated making a PATCH request to the `/v2/subscriptions/<subscription-id>` endpoint.\n\nThe Subscription id had been auto-generated when the subscription was created."
+							},
+							"response": []
+						},
+						{
+							"name": "List all Subscriptions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/subscriptions/",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"subscriptions",
+										""
+									]
+								},
+								"description": "This example lists all subscriptions by making a GET request to the `/v2/subscriptions/` endpoint.\n\nThe `notification` section of each subscription will also include the last time the conditios of the subscription\nwere met, and whether associated the POST action was successful."
+							},
+							"response": []
+						},
+						{
+							"name": "Read the detail of a Subscription",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{orion}}/v2/subscriptions/5aead3361587e1918de90aba",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"subscriptions",
+										"5aead3361587e1918de90aba"
+									]
+								},
+								"description": "This example obtains the full details of a subscription with a given id.\n\nThe response includes additional details in the `notification` section showing \nthe last time the conditions of the subscription were met, and whether associated the POST \naction was successful.\n\nSubscription details can be read by making a GET request to the `/v2/subscriptions/<subscription-id>` endpoint.\n\nThe Subscription id had been auto-generated when the subscription was created."
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Subscription ( Store 1) - Low Stock",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"Notify me of low stock in Store 001\",\n    \"subject\": {\n        \"entities\": [\n            {\n                \"idPattern\": \".*\",\n                \"type\": \"InventoryItem\"\n            }\n        ],\n        \"condition\": {\n            \"attrs\": [\n                \"shelfCount\"\n            ],\n            \"expression\": {\n                \"q\": \"shelfCount<10;refStore==urn:ngsi-ld:Store:001\"\n            }\n        }\n    },\n    \"notification\": {\n        \"http\": {\n            \"url\": \"http://context-provider:3000/subscription/low-stock-store001\"\n        },\n        \"attrsFormat\": \"keyValues\"\n    }\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/subscriptions",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"subscriptions"
+									]
+								},
+								"description": "This example creates a new subscription which will only fire under specific conditions - \n*low stock for Store 001* - and will only return key-value pairs\nfor the entity affected. The subscription will fire an asynchronous notification to a URL\nwhenever the context is changed and only when all of the conditions of the subscription are met.\n\nNew subscriptions can be added by making a POST request to the `/v2/subscriptions/` endpoint.\n\n* The `subject` section of the request states that the subscription will be checked whenever the `shelfCount` attribute of\n  any **InventoryItem** entity is altered.\n* The `expression` section of the request states that the subscription will only fire if the `shelfCount` is below 10 items\n  and the **InventoryItem** entity belongs to `Store:001`\n* The `notification` section of the body states that a POST request containing all affected entities will\n  be sent to the `http://context-provider:3000/subscription/low-stock-store001` endpoint. . The `attrsFormat` attribute informs\n  the context broker to only send key-value pairs\n\n---\nSubsequent requests will create duplicate subscriptions"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Subscription ( Store 2) - Low Stock",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"description\": \"Notify me of low stock in Store 002\",\n  \"subject\": {\n    \"entities\": [\n      {\n        \"idPattern\": \".*\",\n        \"type\": \"InventoryItem\"\n      }\n    ],\n     \"condition\": {\n      \"attrs\": [\n        \"shelfCount\"\n      ],\n      \"expression\": {\n        \"q\": \"shelfCount<10;refStore==urn:ngsi-ld:Store:002\"\n      }\n    }\n  },\n  \"notification\": {\n    \"http\": {\n      \"url\": \"http://context-provider:3000/subscription/low-stock-store002\"\n    },\n    \"attrsFormat\" : \"keyValues\"\n  }\n}"
+								},
+								"url": {
+									"raw": "http://{{orion}}/v2/subscriptions",
+									"protocol": "http",
+									"host": [
+										"{{orion}}"
+									],
+									"path": [
+										"v2",
+										"subscriptions"
+									]
+								},
+								"description": "This example creates a new subscription which will only fire under specific conditions - *low stock for Store 002* -  and will only return \nkey-value pairs for the entity affected. The subscription will fire an asynchronous notification to a URL\nwhenever the context is changed and only when all of the conditions of the subscription are met.\n\nNew subscriptions can be added by making a POST request to the `/v2/subscriptions/` endpoint.\n\n* The `subject` section of the request states that the subscription will be checked whenever the `shelfCount` attribute of\n  any **InventoryItem** entity is altered.\n* The `expression` section of the request states that the subscription will only fire if the `shelfCount` is below 10 items\n  and the **InventoryItem** entity belongs to `Store:002`\n* The `notification` section of the body states that a POST request containing all affected entities will\n  be sent to the `http://context-provider:3000/subscription/low-stock-store002` endpoint. The `attrsFormat` attribute informs\n  the context broker to only send key-value pairs\n\n---\nSubsequent requests will create duplicate subscriptions"
+							},
+							"response": []
+						}
+					],
+					"description": "A subscription notifies another service by making a POST request to a specified URL when the conditions of the subscription have been met.\n\nThe **CRUD** operations for subscriptions map on to the expected HTTP verbs under the `/v2/subscriptions/` endpoint.\n\n* **Create** - HTTP POST\n* **Read** - HTTP GET\n* **Update** - HTTP PATCH\n* **Delete** - HTTP DELETE\n\nThe `<subscription-id>` is auto generated when the subscription is created and returned in Header\nof the POST response to be used by the other operation thereafter.\n",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Operações CRUD - IoT Agent",
+			"item": [
+				{
+					"name": "Device CRUD Actions",
+					"item": [
+						{
+							"name": "Create a Provisioned Device",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"devices\": [\n        {\n            \"device_id\": \"bell002\",\n            \"entity_name\": \"urn:ngsi-ld:Bell:002\",\n            \"entity_type\": \"Bell\",\n            \"apikey\": \"4jggokgpepnvsb2uv4s40d59ov\",\n            \"protocol\": \"PDI-IoTA-UltraLight\",\n            \"transport\": \"HTTP\",\n            \"endpoint\": \"http://context-provider:3001/iot/bell002\",\n            \"commands\": [\n                {\n                    \"name\": \"ring\",\n                    \"type\": \"command\"\n                }\n            ],\n            \"static_attributes\": [\n                {\n                    \"name\": \"refStore\",\n                    \"type\": \"Relationship\",\n                    \"value\": \"urn:ngsi-ld:Store:002\"\n                }\n            ]\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/devices",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"devices"
+									]
+								},
+								"description": "This example provisions an individual device. It maps the `device_id=bell002` to the entity URN `urn:ngsi-ld:Bell:002` and gives the\nentity a type `Bell`. The IoT Agent has been informed that the device offers a single `ring` `command` and is listening on \n`http://context-provider:3001/iot/bell002` using HTTP. `attributes`, `lazy` attributes and `static_attributes` can also be provisioned."
+							},
+							"response": []
+						},
+						{
+							"name": "Read Provisioned Device Details",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									}
+								],
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/devices/bell002",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"devices",
+										"bell002"
+									]
+								},
+								"description": "This example obtains the full details of a provisioned device with a given `<device-id>` path.\n\nThe response includes all the commands and attributes mappings associated with the device\n\nProvisioned Device details can be read by making a GET request to the `/iot/devices/<device-id>` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "List all Provisioned Devices",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									}
+								],
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/devices",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"devices"
+									]
+								},
+								"description": "This example lists all provisioned devices by making a GET request to the `/iot/devices` endpoint.\n\nThe response includes all the commands and attributes mappings associated with all devices"
+							},
+							"response": []
+						},
+						{
+							"name": "Update a Provisioned Device",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"entity_name\": \"urn:ngsi-ld:Thing:bell002\"\n}"
+								},
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/devices/bell002",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"devices",
+										"bell002"
+									]
+								},
+								"description": "This example updates an existing provisioned device by making a PUT request to the `/iot/devices/<device-id>` endpoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Provisioned Device",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/devices/urn:ngsi-ld:Motion:001",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"devices",
+										"urn:ngsi-ld:Motion:001"
+									]
+								},
+								"description": "This example removes a provisioned device by making a DELETE request to the `/iot/services/<device-id>` endpoint.\n\nThe device attributes will no longer be mapped and commands can no longer be sent to the device.\nIf the device is making active measurements, they will still be handled with default values\nif the associated service has not been deleted."
+							},
+							"response": []
+						}
+					],
+					"description": "The **CRUD** operations for an individual device map on to the expected HTTP verbs under the `/iot/devices` endpoint\n\n* **Create** - HTTP POST\n* **Read** - HTTP GET\n* **Update** - HTTP PUT\n* **Delete** - HTTP DELETE\n\nUse the `<device-id>` to uniquely identify a device.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Service Group CRUD Actions",
+					"item": [
+						{
+							"name": "Create a Service Group",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n \"services\": [\n   {\n     \"apikey\":      \"4jggokgpepnvsb2uv4s40d59ov\",\n     \"cbroker\":     \"http://orion:1026\",\n     \"entity_type\": \"Thing\",\n     \"resource\":    \"/iot/d\"\n   }\n ]\n}"
+								},
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/services",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"services"
+									]
+								},
+								"description": "This example provisions an anonymous group of devices. It tells the IoT Agent that a series of devices\nwill be sending messages to the `IOTA_HTTP_PORT` (where the IoT Agent is listening for **Northbound** communications)\n\nIn the example the IoT Agent is informed that the `/iot/d` endpoint will be used and that devices will authenticate\nthemselves by including the token `4jggokgpepnvsb2uv4s40d59ov`."
+							},
+							"response": []
+						},
+						{
+							"name": "Read Service Group details",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									}
+								],
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/services",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"services"
+									]
+								},
+								"description": "This example obtains the full details of a provisioned services with a given `resource` path.\n\nThe response includes all the defaults associated with the service group such as the `entity_type` and any default commands or attribute mappings.\n\nService group details can be read by making a GET request to the `/iot/services` endpoint and providing a `resource` parameter."
+							},
+							"response": []
+						},
+						{
+							"name": "List all Service Groups",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									}
+								],
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/services",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"services"
+									]
+								},
+								"description": "This example lists all provisioned services by making a GET request to the `/iot/services/` endpoint.\n\nThe response includes all the defaults associated with each service group such as the `entity_type` and any default commands or attribute mappings."
+							},
+							"response": []
+						},
+						{
+							"name": "Update a Service Group",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"entity_type\": \"IoT-Device\"\n}"
+								},
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/services?resource=/iot/d&apikey=4jggokgpepnvsb2uv4s40d59ov",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"services"
+									],
+									"query": [
+										{
+											"key": "resource",
+											"value": "/iot/d"
+										},
+										{
+											"key": "apikey",
+											"value": "4jggokgpepnvsb2uv4s40d59ov"
+										}
+									]
+								},
+								"description": "This example updates an existing service group with a given `resource` path and `apikey`\n\nService group details can be updated by making a PUT request to the `/iot/services` endpoint \nand providing a `resource` and `apikey` parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a Service Group",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "fiware-service",
+										"value": "openiot"
+									},
+									{
+										"key": "fiware-servicepath",
+										"value": "/"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://{{iot-agent}}/iot/services/?resource=/iot/json&apikey=4jggokgpepnvsb2uv4s40d59ov",
+									"protocol": "http",
+									"host": [
+										"{{iot-agent}}"
+									],
+									"path": [
+										"iot",
+										"services",
+										""
+									],
+									"query": [
+										{
+											"key": "resource",
+											"value": "/iot/json",
+											"description": "The path that the IoT Agent had been listening on"
+										},
+										{
+											"key": "apikey",
+											"value": "4jggokgpepnvsb2uv4s40d59ov"
+										}
+									]
+								},
+								"description": "This example removes a provisioned service group by making a DELETE request to the `/iot/services/` endpoint.\n\nIt means that requests to `http://iot-agent:7896/iot/d?i=<device_id>&k=4jggokgpepnvsb2uv4s40d59ov`\n(where the IoT Agent is listening for **Northbound** communications) should no longer be processed by the IoT Agent. \nThe `apiKey` and `resource` parameters must be supplied in order to identify the service group to be deleted."
+							},
+							"response": []
+						}
+					],
+					"description": "The **CRUD** operations for a service group map on to the expected HTTP verbs under the `/iot/services` endpoint\n\n* **Create** - HTTP POST\n* **Read** - HTTP GET\n* **Update** - HTTP PUT\n* **Delete** - HTTP DELETE\n\nUse the `resource` and `apikey` parameters to uniquely identify a service group.",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/clima?city=São Paulo&country=Brazil",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"clima"
+					],
+					"query": [
+						{
+							"key": "city",
+							"value": "São Paulo"
+						},
+						{
+							"key": "country",
+							"value": "Brazil"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "orion",
+			"value": "localhost:1026",
+			"type": "string"
+		},
+		{
+			"key": "iot-agent",
+			"value": "localhost:4041",
+			"type": "string"
+		},
+		{
+			"key": "proxy",
+			"value": "localhost:8081",
+			"type": "string"
+		}
+	]
+}
